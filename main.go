@@ -22,9 +22,9 @@ func main() {
 		redis.Close()
 	}()
 
-	menusHandler := InitializeMenuHandler()
-	rolesHandler := InitializeRoleHandler()
-	usersHandler := InitializeUserHandler()
+	menusHandler := initializeMenuHandler()
+	rolesHandler := initializeRoleHandler()
+	usersHandler := initializeUserHandler()
 
 	authorizationService := InitializeAuthorizationService()
 
@@ -54,25 +54,25 @@ func main() {
 	r.Run(":8081")
 }
 
-func InitializeMenuHandler() handler.Menu {
+func initializeMenuHandler() handler.Menu {
 	wire.Build(di.MenuRepositoryInjectionSet, menus.ProvideService, handler.ProvideMenu)
 
 	return handler.Menu{}
 }
 
-func InitializeRoleHandler() handler.Role {
+func initializeRoleHandler() handler.Role {
 	wire.Build(di.RoleRepositoryInjectionSet, roles.ProvideService, handler.ProvideRole)
 
 	return handler.Role{}
 }
 
-func InitializeUserHandler() handler.User {
+func initializeUserHandler() handler.User {
 	wire.Build(di.UserRepositoryInjectionSet, config.ProvideRedisPool, roles.ProvideRepo, users.ProvideService, handler.ProvideUser)
 
 	return handler.User{}
 }
 
-func InitializeAuthorizationService() middleware.AuthService {
+func initializeAuthorizationService() middleware.AuthService {
 	wire.Build(config.ProvideRedisPool, middleware.ProvideAuthService)
 
 	return middleware.AuthService{}

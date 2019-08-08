@@ -1,6 +1,167 @@
 {
 	"comment": "",
 	"ignore": "test",
-	"package": [],
-	"rootPath": "github.com/yogaagungk/assets-management"
+	"package": [
+		{
+			"checksumSHA1": "qlEzrgKgIkh7y0ePm9BNo1cNdXo=",
+			"origin": "github.com/gin-gonic/gin/vendor/github.com/gin-contrib/sse",
+			"path": "github.com/gin-contrib/sse",
+			"revision": "20440b96b9ab70ef45346fb2a71f769586969442",
+			"revisionTime": "2019-08-05T01:42:59Z"
+		},
+		{
+			"checksumSHA1": "7de9zNLQnSWNPiQB47JICGFDJ5w=",
+			"path": "github.com/gin-gonic/gin",
+			"revision": "20440b96b9ab70ef45346fb2a71f769586969442",
+			"revisionTime": "2019-08-05T01:42:59Z"
+		},
+		{
+			"checksumSHA1": "WIzMb5VsQrOUqX2eZLcJjAIRJk4=",
+			"path": "github.com/gin-gonic/gin/binding",
+			"revision": "20440b96b9ab70ef45346fb2a71f769586969442",
+			"revisionTime": "2019-08-05T01:42:59Z"
+		},
+		{
+			"checksumSHA1": "rST0S8cuVbM57VmJhWXhKNUkKTc=",
+			"path": "github.com/gin-gonic/gin/internal/json",
+			"revision": "20440b96b9ab70ef45346fb2a71f769586969442",
+			"revisionTime": "2019-08-05T01:42:59Z"
+		},
+		{
+			"checksumSHA1": "DKWfkogvVN1sEOlx2PWTteOpY4M=",
+			"path": "github.com/gin-gonic/gin/render",
+			"revision": "20440b96b9ab70ef45346fb2a71f769586969442",
+			"revisionTime": "2019-08-05T01:42:59Z"
+		},
+		{
+			"checksumSHA1": "CGj8VcI/CpzxaNqlqpEVM7qElD4=",
+			"origin": "github.com/gin-gonic/gin/vendor/github.com/golang/protobuf/proto",
+			"path": "github.com/golang/protobuf/proto",
+			"revision": "20440b96b9ab70ef45346fb2a71f769586969442",
+			"revisionTime": "2019-08-05T01:42:59Z"
+		},
+		{
+			"checksumSHA1": "ecLoSDR47iYoocQ2YuG8oz33UFE=",
+			"path": "github.com/google/wire",
+			"revision": "66f78fc84606af0a8c4fa6bff8cebc488f1c0f86",
+			"revisionTime": "2019-07-16T16:00:00Z"
+		},
+		{
+			"checksumSHA1": "4DgEcOv2o9NyZAHCbdS76mToqpU=",
+			"origin": "github.com/gin-gonic/gin/vendor/github.com/json-iterator/go",
+			"path": "github.com/json-iterator/go",
+			"revision": "20440b96b9ab70ef45346fb2a71f769586969442",
+			"revisionTime": "2019-08-05T01:42:59Z"
+		},
+		{
+			"checksumSHA1": "74gCzvJiE6bXX3i4vIVCYhffDHc=",
+			"origin": "github.com/gin-gonic/gin/vendor/github.com/mattn/go-isatty",
+			"path": "github.com/mattn/go-isatty",
+			"revision": "20440b96b9ab70ef45346fb2a71f769586969442",
+			"revisionTime": "2019-08-05T01:42:59Z"
+		},
+		{
+			"checksumSHA1": "ZTcgWKWHsrX0RXYVXn5Xeb8Q0go=",
+			"origin": "github.com/gin-gonic/gin/vendor/github.com/modern-go/concurrent",
+			"path": "github.com/modern-go/concurrent",
+			"revision": "20440b96b9ab70ef45346fb2a71f769586969442",
+			"revisionTime": "2019-08-05T01:42:59Z"
+		},
+		{
+			"checksumSHA1": "qvH48wzTIV3QKSDqI0dLFtVjaDI=",
+			"origin": "github.com/gin-gonic/gin/vendor/github.com/modern-go/reflect2",
+			"path": "github.com/modern-go/reflect2",
+			"revision": "20440b96b9ab70ef45346fb2a71f769586969442",
+			"revisionTime": "2019-08-05T01:42:59Z"
+		},
+		{
+			"checksumSHA1": "rIwVAqybgQs3ycR5WEgdxqzmkNo=",
+			"origin": "github.com/gin-gonic/gin/vendor/github.com/ugorji/go/codec",
+			"path": "github.com/ugorji/go/codec",
+			"revision": "20440b96b9ab70ef45346fb2a71f769586969442",
+			"revisionTime": "2019-08-05T01:42:59Z"
+		},
+		{
+			"checksumSHA1": "bDMq6b6+yAKJKNuSygvjSCjoTTg=",
+			"path": "github.com/yogaagungk/assets-management/common",
+			"revision": "353832a242b4befbdabaab5f8cee0648e9a96a52",
+			"revisionTime": "2019-08-08T02:11:49Z"
+		},
+		{
+			"checksumSHA1": "NhARNevAkxWA8kdv3YMgUKrpJYY=",
+			"path": "github.com/yogaagungk/assets-management/config",
+			"revision": "353832a242b4befbdabaab5f8cee0648e9a96a52",
+			"revisionTime": "2019-08-08T02:11:49Z"
+		},
+		{
+			"checksumSHA1": "HJ5ct1oy+H4D9l63dd652592E2E=",
+			"path": "github.com/yogaagungk/assets-management/di",
+			"revision": "353832a242b4befbdabaab5f8cee0648e9a96a52",
+			"revisionTime": "2019-08-08T02:11:49Z"
+		},
+		{
+			"checksumSHA1": "LuEUaLkU19wc7LU3XB5zsZ1GF4Q=",
+			"path": "github.com/yogaagungk/assets-management/handler",
+			"revision": "353832a242b4befbdabaab5f8cee0648e9a96a52",
+			"revisionTime": "2019-08-08T02:11:49Z"
+		},
+		{
+			"checksumSHA1": "kMHHFmzBIvc2M0COWAa2PA97NNc=",
+			"path": "github.com/yogaagungk/assets-management/middleware",
+			"revision": "353832a242b4befbdabaab5f8cee0648e9a96a52",
+			"revisionTime": "2019-08-08T02:11:49Z"
+		},
+		{
+			"checksumSHA1": "hGrBHsTIUemwjTbAwnX6T7bZeCA=",
+			"path": "github.com/yogaagungk/assets-management/services/category_assets",
+			"revision": "353832a242b4befbdabaab5f8cee0648e9a96a52",
+			"revisionTime": "2019-08-08T02:11:49Z"
+		},
+		{
+			"checksumSHA1": "XxjiBKxOAtyWKmKMQ+oyaz4TLGY=",
+			"path": "github.com/yogaagungk/assets-management/services/menus",
+			"revision": "353832a242b4befbdabaab5f8cee0648e9a96a52",
+			"revisionTime": "2019-08-08T02:11:49Z"
+		},
+		{
+			"checksumSHA1": "ZEkXXnCV7/4I+HRWH0mCvzUCI8A=",
+			"path": "github.com/yogaagungk/assets-management/services/roles",
+			"revision": "353832a242b4befbdabaab5f8cee0648e9a96a52",
+			"revisionTime": "2019-08-08T02:11:49Z"
+		},
+		{
+			"checksumSHA1": "1nmxaG7EPoe39vBrKl/+cCnHtVw=",
+			"path": "github.com/yogaagungk/assets-management/services/users",
+			"revision": "353832a242b4befbdabaab5f8cee0648e9a96a52",
+			"revisionTime": "2019-08-08T02:11:49Z"
+		},
+		{
+			"checksumSHA1": "NTBwSKVd4EonLHhtu96DblXnvRc=",
+			"path": "github.com/yogaagungk/assets-management/util/auth",
+			"revision": "353832a242b4befbdabaab5f8cee0648e9a96a52",
+			"revisionTime": "2019-08-08T02:11:49Z"
+		},
+		{
+			"checksumSHA1": "6aR7w8AeySHBwf96Jha1+cuh8Vw=",
+			"origin": "github.com/gin-gonic/gin/vendor/golang.org/x/sys/unix",
+			"path": "golang.org/x/sys/unix",
+			"revision": "20440b96b9ab70ef45346fb2a71f769586969442",
+			"revisionTime": "2019-08-05T01:42:59Z"
+		},
+		{
+			"checksumSHA1": "P/k5ZGf0lEBgpKgkwy++F7K1PSg=",
+			"origin": "github.com/gin-gonic/gin/vendor/gopkg.in/go-playground/validator.v8",
+			"path": "gopkg.in/go-playground/validator.v8",
+			"revision": "20440b96b9ab70ef45346fb2a71f769586969442",
+			"revisionTime": "2019-08-05T01:42:59Z"
+		},
+		{
+			"checksumSHA1": "QqDq2x8XOU7IoOR98Cx1eiV5QY8=",
+			"origin": "github.com/gin-gonic/gin/vendor/gopkg.in/yaml.v2",
+			"path": "gopkg.in/yaml.v2",
+			"revision": "20440b96b9ab70ef45346fb2a71f769586969442",
+			"revisionTime": "2019-08-05T01:42:59Z"
+		}
+	],
+	"rootPath": "github.com/assset-management"
 }
