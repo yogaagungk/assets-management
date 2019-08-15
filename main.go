@@ -45,6 +45,9 @@ func main() {
 	// mapping ROLE
 	r.GET("/roles", rolesHandler.Get)
 
+	// mapping USER
+	r.GET("users", usersHandler.Get)
+
 	// mapping Register and Login
 	r.POST("/register", usersHandler.Register)
 	r.POST("/login", usersHandler.Login)

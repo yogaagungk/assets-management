@@ -17,10 +17,10 @@ func (service *Service) Find(param Role, offset string, limit string) ([]Role, s
 	roles, isFound := service.repo.Find(param, offset, limit)
 
 	if !isFound {
-		return roles, common.DATA_FOUND
+		return nil, common.DATA_NOT_FOUND
 	}
 
-	return nil, common.DATA_NOT_FOUND
+	return roles, common.DATA_NOT_FOUND
 }
 
 func (service *Service) FindByID(id uint64) (Role, string) {

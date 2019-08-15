@@ -24,7 +24,12 @@ func ProvideRepo(db *sqlx.DB) *Repository {
 func (repo *Repository) Find(param User, offset string, limit string) ([]User, bool) {
 	var users []User
 
-	var sql = "SELECT * FROM users INNER JOIN roles ON users.role_id = roles.id WHERE 1=1"
+	var sql = `SELECT 
+	users.id, 
+	users.name,
+	users.username, 
+	roles.id, 
+	roles.name FROM users INNER JOIN roles ON users.role_id = roles.id WHERE 1=1`
 
 	if param.Username != "" {
 		sql += " AND username = '" + param.Username + "'"
@@ -40,7 +45,24 @@ func (repo *Repository) Find(param User, offset string, limit string) ([]User, b
 
 	sql += " LIMIT " + offset + "," + limit
 
-	result := repo.db.Select(&users, sql)
+	rows, result := repo.db.Query(sql)
+
+	for rows.Next() {
+		var user User
+
+		err := rows.Scan(
+			&user.ID,
+			&user.Name,
+			&user.Username,
+			&user.Role.ID,
+			&user.Role.Name)
+
+		if err != nil {
+			log.Panic(err.Error())
+		} else {
+			users = append(users, user)
+		}
+	}
 
 	return users, result == nil
 }
@@ -71,7 +93,25 @@ func (repo *Repository) Count(param User) uint {
 func (repo *Repository) FindByID(id uint64) (User, bool) {
 	var user User
 
-	result := repo.db.Get(&user, "SELECT * FROM users WHERE id = ? ", id)
+	sql := `SELECT 
+	users.id, 
+	users.name,
+	users.username, 
+	roles.id, 
+	roles.name FROM users INNER JOIN roles ON users.role_id = roles.id WHERE users.id = ?`
+
+	row := repo.db.QueryRow(sql, id)
+
+	result := row.Scan(
+		&user.ID,
+		&user.Name,
+		&user.Username,
+		&user.Role.ID,
+		&user.Role.Name)
+
+	if result != nil {
+		log.Panic(result.Error())
+	}
 
 	return user, result == nil
 }
@@ -81,7 +121,27 @@ func (repo *Repository) FindByID(id uint64) (User, bool) {
 func (repo *Repository) FindByUsername(username string) (User, bool) {
 	var user User
 
-	result := repo.db.Get(&user, "SELECT * FROM users WHERE username = ? ", username)
+	sql := `SELECT 
+	users.id, 
+	users.name,
+	users.username, 
+	users.password, 
+	roles.id, 
+	roles.name FROM users INNER JOIN roles ON users.role_id = roles.id WHERE users.username = ?`
+
+	row := repo.db.QueryRow(sql, user)
+
+	result := row.Scan(
+		&user.ID,
+		&user.Name,
+		&user.Username,
+		&user.Password,
+		&user.Role.ID,
+		&user.Role.Name)
+
+	if result != nil {
+		log.Panic(result.Error())
+	}
 
 	return user, result == nil
 }
