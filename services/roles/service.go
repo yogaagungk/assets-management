@@ -14,19 +14,19 @@ func ProvideService(repo *Repository) *Service {
 }
 
 func (service *Service) Find(param Role, offset string, limit string) ([]Role, string) {
-	roles, isNotFound := service.repo.Find(param, offset, limit)
+	roles, isFound := service.repo.Find(param, offset, limit)
 
-	if isNotFound {
-		return nil, common.DATA_NOT_FOUND
+	if !isFound {
+		return roles, common.DATA_FOUND
 	}
 
-	return roles, common.DATA_FOUND
+	return nil, common.DATA_NOT_FOUND
 }
 
 func (service *Service) FindByID(id uint64) (Role, string) {
-	role, isNotFound := service.repo.FindByID(id)
+	role, isFound := service.repo.FindByID(id)
 
-	if isNotFound {
+	if !isFound {
 		return Role{}, common.DATA_NOT_FOUND
 	}
 
@@ -34,9 +34,9 @@ func (service *Service) FindByID(id uint64) (Role, string) {
 }
 
 func (service *Service) FindByName(name string) (Role, string) {
-	role, isNotFound := service.repo.FindByName(name)
+	role, isFound := service.repo.FindByName(name)
 
-	if isNotFound {
+	if !isFound {
 		return Role{}, common.DATA_NOT_FOUND
 	}
 

@@ -23,32 +23,38 @@ func ProvideService(repo *Repository, roleRepo *roles.Repository, redis redis.Co
 }
 
 func (service *Service) Register(param User) string {
-	role, isNotFound := service.roleRepo.FindByName(common.ROLE_ADMIN) // find ID of ROLE_ADMIN
+	role, isFound := service.roleRepo.FindByName(common.ROLE_ADMIN) // find ID of ROLE_ADMIN
 
-	if isNotFound {
+	if !isFound {
 		return common.SAVE_FAILED
 	}
+
+	tx, _ := service.repo.db.Begin()
 
 	var entity User
 	entity.ID = param.ID
 	entity.Name = param.Name
 	entity.Username = param.Username
 	entity.Password = hashPassword(param.Password) // hashing password
-	entity.RoleId = role.ID                        // default role user is ROLE_ADMIN
+	entity.Role = role                             // default role user is ROLE_ADMIN
 
-	_, err := service.repo.Save(entity)
+	_, err := service.repo.Save(tx, entity)
 
-	if err != nil {
-		return common.SAVE_FAILED
-	} else {
+	if err == nil {
+		tx.Commit()
+
 		return common.SAVE_SUCCESS
+	} else {
+		tx.Rollback()
+
+		return common.SAVE_FAILED
 	}
 }
 
 func (service *Service) Login(param User) (auth.UserAuth, string) {
-	user, isNotFound := service.repo.FindByUsername(param.Username)
+	user, isFound := service.repo.FindByUsername(param.Username)
 
-	if isNotFound {
+	if !isFound {
 		return auth.UserAuth{}, common.LOGIN_FAILED
 	}
 
@@ -84,41 +90,53 @@ func (service *Service) Logout(username string) string {
 }
 
 func (service *Service) Update(entity User) string {
-	_, isNotFound := service.repo.FindByID(entity.ID)
+	_, isFound := service.repo.FindByID(entity.ID)
 
-	if isNotFound {
+	if !isFound {
 		return common.DATA_NOT_FOUND
 	} else {
-		_, rowAffected := service.repo.Update(entity)
+		tx, _ := service.repo.db.Begin()
+
+		_, rowAffected := service.repo.Update(tx, entity)
 
 		if rowAffected == 1 {
+			tx.Commit()
+
 			return common.UPDATE_SUCCESS
 		} else {
+			tx.Rollback()
+
 			return common.UPDATE_FAILED
 		}
 	}
 }
 
 func (service *Service) Delete(id uint64) string {
-	user, isNotFound := service.repo.FindByID(id)
+	user, isFound := service.repo.FindByID(id)
 
-	if isNotFound {
+	if !isFound {
 		return common.DATA_NOT_FOUND
 	} else {
-		_, rowAffected := service.repo.Delete(user)
+		tx, _ := service.repo.db.Begin()
+
+		_, rowAffected := service.repo.Delete(tx, user)
 
 		if rowAffected == 1 {
+			tx.Commit()
+
 			return common.DELETE_SUCCESS
 		} else {
+			tx.Rollback()
+
 			return common.DELETE_FAILED
 		}
 	}
 }
 
 func (service *Service) Find(param User, offset string, limit string) ([]User, string) {
-	users, isNotFound := service.repo.Find(param, offset, limit)
+	users, isFound := service.repo.Find(param, offset, limit)
 
-	if isNotFound {
+	if !isFound {
 		return nil, common.DATA_NOT_FOUND
 	}
 
@@ -130,9 +148,9 @@ func (service *Service) Count(param User) uint {
 }
 
 func (service *Service) FindByID(id uint64) (User, string) {
-	user, isNotFound := service.repo.FindByID(id)
+	user, isFound := service.repo.FindByID(id)
 
-	if isNotFound {
+	if !isFound {
 		return User{}, common.DATA_NOT_FOUND
 	}
 

@@ -20,10 +20,20 @@ func ProvideAuthService(redis redis.Conn) AuthService {
 }
 
 func (authS *AuthService) Authorization() gin.HandlerFunc {
-	log.Println("entering Authorization middleware")
-
 	return func(c *gin.Context) {
+		log.Println("entering Authorization middleware")
+
 		tokenHeader := c.GetHeader("Authorization")
+
+		if tokenHeader == "" {
+			log.Println("Can't found Authorization header")
+
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status": common.INVALID_HEADER,
+			})
+			c.Abort()
+			return
+		}
 
 		tokenString := tokenHeader[7:len(tokenHeader)]
 

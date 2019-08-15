@@ -3,36 +3,41 @@ package config
 import (
 	"log"
 
-	"github.com/yogaagungk/assets-management/services/roles"
-	"github.com/yogaagungk/assets-management/services/users"
+	"github.com/yogaagungk/assets-management/database"
 
-	"github.com/jinzhu/gorm"
-	_ "github.com/jinzhu/gorm/dialects/mysql"
-	"github.com/yogaagungk/assets-management/services/menus"
+	"github.com/jmoiron/sqlx"
 )
 
-var DB *gorm.DB = nil
+var DB *sqlx.DB
 
 /*
 OpenDatabaseConnection : Open connection to database
 */
-func OpenDatabaseConnection() *gorm.DB {
-	DB, err := gorm.Open(
+func OpenDatabaseConnection() *sqlx.DB {
+	DB, errConnect := sqlx.Connect(
 		"mysql",
 		"root:root@tcp(localhost:3306)/assets_management?charset=utf8&parseTime=True&loc=Local",
 	)
 
-	if err != nil {
-		log.Fatal(err.Error())
+	if errConnect != nil {
+		log.Fatal(errConnect.Error())
 	}
 
-	DB.DB().SetMaxIdleConns(5)
-	DB.AutoMigrate(&menus.Menu{}, &roles.Role{}, &users.User{})
+	DB.SetMaxIdleConns(10)
+	DB.SetMaxOpenConns(10)
+
+	for _, sql := range database.SqlScheme {
+		_, errExec := DB.Exec(sql)
+
+		if errExec != nil {
+			log.Panic(errExec.Error())
+		}
+	}
 
 	return DB
 }
 
-func ProvideDatabase() *gorm.DB {
+func ProvideDatabase() *sqlx.DB {
 	if DB == nil {
 		return OpenDatabaseConnection()
 	}

@@ -12,51 +12,69 @@ func ProvideService(repo *Repository) *Service {
 }
 
 func (service *Service) Save(entity CategoryAsset) string {
-	_, err := service.repo.Save(entity)
+	tx, _ := service.repo.db.Begin()
+
+	_, err := service.repo.Save(tx, entity)
 
 	if err != nil {
+		tx.Rollback()
+
 		return common.SAVE_FAILED
 	} else {
+		tx.Commit()
+
 		return common.SAVE_SUCCESS
 	}
 }
 
 func (service *Service) Update(entity CategoryAsset) string {
-	_, isNotFound := service.repo.FindByID(entity.ID)
+	_, isFound := service.repo.FindByID(entity.ID)
 
-	if isNotFound {
+	if !isFound {
 		return common.DATA_NOT_FOUND
 	} else {
-		_, rowAffected := service.repo.Update(entity)
+		tx, _ := service.repo.db.Begin()
+
+		_, rowAffected := service.repo.Update(tx, entity)
 
 		if rowAffected == 1 {
+			tx.Commit()
+
 			return common.UPDATE_SUCCESS
 		} else {
+			tx.Rollback()
+
 			return common.UPDATE_FAILED
 		}
 	}
 }
 
 func (service *Service) Delete(id uint64) string {
-	categoryAsset, isNotFound := service.repo.FindByID(id)
+	categoryAsset, isFound := service.repo.FindByID(id)
 
-	if isNotFound {
+	if !isFound {
 		return common.DATA_NOT_FOUND
 	} else {
-		_, rowAffected := service.repo.Delete(categoryAsset)
+		tx, _ := service.repo.db.Begin()
+
+		_, rowAffected := service.repo.Delete(tx, categoryAsset)
 
 		if rowAffected == 1 {
+			tx.Commit()
+
 			return common.DELETE_SUCCESS
 		} else {
+			tx.Rollback()
+
 			return common.DELETE_FAILED
 		}
 	}
 }
 
 func (service *Service) Find(param CategoryAsset, offset string, limit string) ([]CategoryAsset, string) {
-	categoryAssets, isNotFound := service.repo.Find(param, offset, limit)
+	categoryAssets, isFound := service.repo.Find(param, offset, limit)
 
-	if isNotFound {
+	if !isFound {
 		return nil, common.DATA_NOT_FOUND
 	}
 
@@ -68,9 +86,9 @@ func (service *Service) Count(param CategoryAsset) uint {
 }
 
 func (service *Service) FindByID(id uint64) (CategoryAsset, string) {
-	categoryAsset, isNotFound := service.repo.FindByID(id)
+	categoryAsset, isFound := service.repo.FindByID(id)
 
-	if isNotFound {
+	if !isFound {
 		return CategoryAsset{}, common.DATA_NOT_FOUND
 	}
 

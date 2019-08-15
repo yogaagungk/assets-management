@@ -1,16 +1,16 @@
 package roles
 
 import (
-	"github.com/jinzhu/gorm"
+	"github.com/jmoiron/sqlx"
 )
 
-// Repository is a object for bind gorm.DB instrance
+// Repository is a object for bind sqlx.DB instrance
 type Repository struct {
-	db *gorm.DB
+	db *sqlx.DB
 }
 
 // InjectDep is a function for inject db to Repository object
-func ProvideRepo(db *gorm.DB) *Repository {
+func ProvideRepo(db *sqlx.DB) *Repository {
 	return &Repository{db}
 }
 
@@ -28,9 +28,9 @@ func (repo *Repository) Find(param Role, offset string, limit string) ([]Role, b
 
 	sql += " LIMIT " + offset + "," + limit
 
-	result := repo.db.Raw(sql).Scan(&roles).RecordNotFound()
+	result := repo.db.Select(&roles, "SELECT * FROM roles")
 
-	return roles, result
+	return roles, result == nil
 }
 
 // FindByID is function to find specific object by id as a param
@@ -38,9 +38,9 @@ func (repo *Repository) Find(param Role, offset string, limit string) ([]Role, b
 func (repo *Repository) FindByID(id uint64) (Role, bool) {
 	var role Role
 
-	result := repo.db.Where("id = ?", id).First(&role).RecordNotFound()
+	result := repo.db.Get(&role, "SELECT * FROM roles WHERE id = ? ", id)
 
-	return role, result
+	return role, result == nil
 }
 
 // FindByName is function to find specific object by id as a param
@@ -48,7 +48,7 @@ func (repo *Repository) FindByID(id uint64) (Role, bool) {
 func (repo *Repository) FindByName(name string) (Role, bool) {
 	var role Role
 
-	result := repo.db.Where("name = ?", name).First(&role).RecordNotFound()
+	result := repo.db.Get(&role, "SELECT * FROM roles WHERE name = ? ", name)
 
-	return role, result
+	return role, result == nil
 }

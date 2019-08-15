@@ -1,14 +1,20 @@
 package users
 
-import "github.com/jinzhu/gorm"
-import "fmt"
+import (
+	"database/sql"
+	"fmt"
+	"log"
+	"time"
+
+	"github.com/jmoiron/sqlx"
+)
 
 type Repository struct {
-	db *gorm.DB
+	db *sqlx.DB
 }
 
 // InjectDep is a function for inject db to Repository object
-func ProvideRepo(db *gorm.DB) *Repository {
+func ProvideRepo(db *sqlx.DB) *Repository {
 	return &Repository{db}
 }
 
@@ -18,25 +24,25 @@ func ProvideRepo(db *gorm.DB) *Repository {
 func (repo *Repository) Find(param User, offset string, limit string) ([]User, bool) {
 	var users []User
 
-	var sql = "SELECT * FROM users WHERE 1=1"
+	var sql = "SELECT * FROM users INNER JOIN roles ON users.role_id = roles.id WHERE 1=1"
 
 	if param.Username != "" {
 		sql += " AND username = '" + param.Username + "'"
 	}
 
 	if param.Name != "" {
-		sql += " AND name LIKE '%" + param.Name + "%'"
+		sql += " AND users.name LIKE '%" + param.Name + "%'"
 	}
 
-	if param.RoleId != 0 {
-		sql += " AND role_id = " + fmt.Sprint(param.RoleId)
+	if param.Role.ID != 0 {
+		sql += " AND role_id = " + fmt.Sprint(param.Role.ID)
 	}
 
 	sql += " LIMIT " + offset + "," + limit
 
-	result := repo.db.Raw(sql).Scan(&users).RecordNotFound()
+	result := repo.db.Select(&users, sql)
 
-	return users, result
+	return users, result == nil
 }
 
 // Count is a function to count length list of object with parameter
@@ -51,11 +57,11 @@ func (repo *Repository) Count(param User) uint {
 		sql += " AND name LIKE '%" + param.Name + "%'"
 	}
 
-	if param.RoleId != 0 {
-		sql += " AND role_id = " + fmt.Sprint(param.RoleId)
+	if param.Role.ID != 0 {
+		sql += " AND role_id = " + fmt.Sprint(param.Role.ID)
 	}
 
-	repo.db.Raw(sql).Scan(&result)
+	repo.db.Get(&result, sql)
 
 	return result
 }
@@ -65,9 +71,9 @@ func (repo *Repository) Count(param User) uint {
 func (repo *Repository) FindByID(id uint64) (User, bool) {
 	var user User
 
-	result := repo.db.Where("id = ?", id).First(&user).RecordNotFound()
+	result := repo.db.Get(&user, "SELECT * FROM users WHERE id = ? ", id)
 
-	return user, result
+	return user, result == nil
 }
 
 // FindByUsername is function to find specific object by username as a param
@@ -75,33 +81,83 @@ func (repo *Repository) FindByID(id uint64) (User, bool) {
 func (repo *Repository) FindByUsername(username string) (User, bool) {
 	var user User
 
-	result := repo.db.Where("username = ?", username).First(&user).RecordNotFound()
+	result := repo.db.Get(&user, "SELECT * FROM users WHERE username = ? ", username)
 
-	return user, result
+	return user, result == nil
 }
 
 // Save is function to save data to table
 // visit http://gorm.io/docs/create.html
-func (repo *Repository) Save(entity User) (User, error) {
-	err := repo.db.Create(&entity)
+func (repo *Repository) Save(tx *sql.Tx, entity User) (User, error) {
+	query := `INSERT INTO users(
+		name, 
+		username, 
+		password, 
+		role_id, 
+		created_time, 
+		updated_time) VALUES(?,?,?,?,?,?)`
 
-	return entity, err.Error
+	result, err := tx.Exec(query,
+		entity.Name,
+		entity.Username,
+		entity.Password,
+		entity.Role.ID,
+		time.Now(),
+		time.Now())
+
+	if err != nil {
+		id, _ := result.LastInsertId()
+
+		entity.ID = uint64(id)
+	}
+
+	return entity, err
 }
 
 // Update is function to update data those changed fields
 // visit http://gorm.io/docs/update.html
-func (repo *Repository) Update(entity User) (User, int64) {
-	result := repo.db.Model(&entity).Updates(User{Name: entity.Name, Password: entity.Password, RoleId: entity.RoleId})
+func (repo *Repository) Update(tx *sql.Tx, entity User) (User, int64) {
+	query := `UPDATE users SET 
+	name = ?, 
+	username = ?, 
+	password = ?,
+	role_id = ? WHERE id = ?`
 
-	return entity, result.RowsAffected
+	result, err := tx.Exec(query,
+		entity.Name,
+		entity.Username,
+		entity.Password,
+		entity.ID)
+
+	rowAffected, _ := result.RowsAffected()
+
+	if err != nil {
+		log.Println(err.Error())
+	} else {
+		id, _ := result.LastInsertId()
+
+		entity.ID = uint64(id)
+	}
+
+	return entity, rowAffected
 }
 
 // Delete is function to delete data (flagged)
 // visit http://gorm.io/docs/delete.html
 // using approach to not permanently delete data, just update on deleteAt column
 // to delete permanently use db.Unscoped().Delete(&entity)
-func (repo *Repository) Delete(entity User) (User, int64) {
-	result := repo.db.Delete(&entity)
+func (repo *Repository) Delete(tx *sql.Tx, entity User) (User, int64) {
+	result, err := tx.Exec("DELETE FROM users WHERE id = ?", entity.ID)
 
-	return entity, result.RowsAffected
+	rowAffected, _ := result.RowsAffected()
+
+	if err != nil {
+		log.Println(err.Error())
+	} else {
+		id, _ := result.LastInsertId()
+
+		entity.ID = uint64(id)
+	}
+
+	return entity, rowAffected
 }

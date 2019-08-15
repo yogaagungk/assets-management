@@ -1,0 +1,41 @@
+package database
+
+var SqlScheme []string = []string{
+	`CREATE TABLE IF NOT EXISTS menus
+	(
+		id           INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+		name         VARCHAR(50)      NOT NULL,
+		created_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+		updated_time TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+		PRIMARY KEY (id)
+	);`,
+	`CREATE TABLE IF NOT EXISTS roles
+	(
+		id           INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+		name         VARCHAR(30)      NOT NULL,
+		created_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+		updated_time TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+		PRIMARY KEY (id)
+	);`,
+	`CREATE TABLE IF NOT EXISTS category_assets
+	(
+		id           INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+		name         VARCHAR(50)      NOT NULL,
+		created_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+		updated_time TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+		PRIMARY KEY (id)
+	);`,
+	`CREATE TABLE IF NOT EXISTS users
+	(
+		id           INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+		name         VARCHAR(50)      NOT NULL,
+		username     VARCHAR(50)      NOT NULL UNIQUE,
+		password     VARCHAR(255)     NOT NULL,
+		role_id      INT(10) UNSIGNED NOT NULL,
+		created_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+		updated_time TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+		PRIMARY KEY (id),
+		INDEX (username),
+		FOREIGN KEY (role_id) REFERENCES roles (id)
+	);`,
+}

@@ -14,51 +14,69 @@ func ProvideService(repo *Repository) *Service {
 }
 
 func (service *Service) Save(entity Menu) string {
-	_, err := service.repo.Save(entity)
+	tx, _ := service.repo.db.Begin()
 
-	if err != nil {
-		return common.SAVE_FAILED
-	} else {
+	_, err := service.repo.Save(tx, entity)
+
+	if err == nil {
+		tx.Commit()
+
 		return common.SAVE_SUCCESS
+	} else {
+		tx.Rollback()
+
+		return common.SAVE_FAILED
 	}
 }
 
 func (service *Service) Update(entity Menu) string {
-	_, isNotFound := service.repo.FindByID(entity.ID)
+	_, isFound := service.repo.FindByID(entity.ID)
 
-	if isNotFound {
+	if !isFound {
 		return common.DATA_NOT_FOUND
 	} else {
-		_, rowAffected := service.repo.Update(entity)
+		tx, _ := service.repo.db.Begin()
+
+		_, rowAffected := service.repo.Update(tx, entity)
 
 		if rowAffected == 1 {
+			tx.Commit()
+
 			return common.UPDATE_SUCCESS
 		} else {
+			tx.Rollback()
+
 			return common.UPDATE_FAILED
 		}
 	}
 }
 
 func (service *Service) Delete(id uint64) string {
-	menu, isNotFound := service.repo.FindByID(id)
+	menu, isFound := service.repo.FindByID(id)
 
-	if isNotFound {
+	if !isFound {
 		return common.DATA_NOT_FOUND
 	} else {
-		_, rowAffected := service.repo.Delete(menu)
+		tx, _ := service.repo.db.Begin()
+
+		_, rowAffected := service.repo.Delete(tx, menu)
 
 		if rowAffected == 1 {
+			tx.Commit()
+
 			return common.DELETE_SUCCESS
 		} else {
+			tx.Rollback()
+
 			return common.DELETE_FAILED
 		}
 	}
 }
 
 func (service *Service) Find(param Menu, offset string, limit string) ([]Menu, string) {
-	menus, isNotFound := service.repo.Find(param, offset, limit)
+	menus, isFound := service.repo.Find(param, offset, limit)
 
-	if isNotFound {
+	if !isFound {
 		return nil, common.DATA_NOT_FOUND
 	}
 
@@ -70,9 +88,9 @@ func (service *Service) Count(param Menu) uint {
 }
 
 func (service *Service) FindByID(id uint64) (Menu, string) {
-	menu, isNotFound := service.repo.FindByID(id)
+	menu, isFound := service.repo.FindByID(id)
 
-	if isNotFound {
+	if !isFound {
 		return Menu{}, common.DATA_NOT_FOUND
 	}
 

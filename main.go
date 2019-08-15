@@ -2,15 +2,14 @@ package main
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/google/wire"
-	_ "github.com/jinzhu/gorm/dialects/mysql"
 	"github.com/yogaagungk/assets-management/config"
-	"github.com/yogaagungk/assets-management/di"
 	"github.com/yogaagungk/assets-management/handler"
 	"github.com/yogaagungk/assets-management/middleware"
 	"github.com/yogaagungk/assets-management/services/menus"
 	"github.com/yogaagungk/assets-management/services/roles"
 	"github.com/yogaagungk/assets-management/services/users"
+
+	_ "github.com/go-sql-driver/mysql"
 )
 
 func main() {
@@ -26,7 +25,7 @@ func main() {
 	rolesHandler := initializeRoleHandler()
 	usersHandler := initializeUserHandler()
 
-	authorizationService := InitializeAuthorizationService()
+	authorizationService := initializeAuthorizationService()
 
 	r := gin.Default()
 	r.Use(gin.Recovery())
@@ -34,7 +33,6 @@ func main() {
 	authorizedMapping := r.Group("/")
 	authorizedMapping.Use(authorizationService.Authorization())
 	{
-		// mapping MENU
 		authorizedMapping.POST("/menus", menusHandler.Post)
 		authorizedMapping.PUT("/menus", menusHandler.Put)
 		authorizedMapping.GET("/menus", menusHandler.Get)
@@ -51,29 +49,37 @@ func main() {
 	r.POST("/register", usersHandler.Register)
 	r.POST("/login", usersHandler.Login)
 
-	r.Run(":8081")
+	r.Run(":8080")
 }
 
 func initializeMenuHandler() handler.Menu {
-	wire.Build(di.MenuRepositoryInjectionSet, menus.ProvideService, handler.ProvideMenu)
-
-	return handler.Menu{}
+	db := config.ProvideDatabase()
+	repository := menus.ProvideRepo(db)
+	service := menus.ProvideService(repository)
+	menu := handler.ProvideMenu(service)
+	return menu
 }
 
 func initializeRoleHandler() handler.Role {
-	wire.Build(di.RoleRepositoryInjectionSet, roles.ProvideService, handler.ProvideRole)
-
-	return handler.Role{}
-}
-
-func initializeUserHandler() handler.User {
-	wire.Build(di.UserRepositoryInjectionSet, config.ProvideRedisPool, roles.ProvideRepo, users.ProvideService, handler.ProvideUser)
-
-	return handler.User{}
+	db := config.ProvideDatabase()
+	repository := roles.ProvideRepo(db)
+	service := roles.ProvideService(repository)
+	role := handler.ProvideRole(service)
+	return role
 }
 
 func initializeAuthorizationService() middleware.AuthService {
-	wire.Build(config.ProvideRedisPool, middleware.ProvideAuthService)
+	conn := config.ProvideRedisPool()
+	authService := middleware.ProvideAuthService(conn)
+	return authService
+}
 
-	return middleware.AuthService{}
+func initializeUserHandler() handler.User {
+	db := config.ProvideDatabase()
+	repository := users.ProvideRepo(db)
+	rolesRepository := roles.ProvideRepo(db)
+	conn := config.ProvideRedisPool()
+	service := users.ProvideService(repository, rolesRepository, conn)
+	user := handler.ProvideUser(service)
+	return user
 }

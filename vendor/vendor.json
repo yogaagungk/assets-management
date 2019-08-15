@@ -3,6 +3,12 @@
 	"ignore": "test",
 	"package": [
 		{
+			"checksumSHA1": "P6u6fDWwSfRL2Bc6uhZ9kcoPsek=",
+			"path": "github.com/dgrijalva/jwt-go",
+			"revision": "5e25c22bd5d6de03265bbe5462dcd162f85046f6",
+			"revisionTime": "2019-06-20T18:01:02Z"
+		},
+		{
 			"checksumSHA1": "qlEzrgKgIkh7y0ePm9BNo1cNdXo=",
 			"origin": "github.com/gin-gonic/gin/vendor/github.com/gin-contrib/sse",
 			"path": "github.com/gin-contrib/sse",
@@ -39,6 +45,12 @@
 			"path": "github.com/golang/protobuf/proto",
 			"revision": "20440b96b9ab70ef45346fb2a71f769586969442",
 			"revisionTime": "2019-08-05T01:42:59Z"
+		},
+		{
+			"checksumSHA1": "+7HQ/tCkITv3GsFlhx3KCdt95Mg=",
+			"path": "github.com/gomodule/redigo/redis",
+			"revision": "574c33c3df387eb8f255c59a08c50793ec33bafa",
+			"revisionTime": "2019-07-24T09:19:59Z"
 		},
 		{
 			"checksumSHA1": "ecLoSDR47iYoocQ2YuG8oz33UFE=",
@@ -163,5 +175,5 @@
 			"revisionTime": "2019-08-05T01:42:59Z"
 		}
 	],
-	"rootPath": "github.com/assset-management"
+	"rootPath": "github.com/yogaagungk/assets-management"
 }
